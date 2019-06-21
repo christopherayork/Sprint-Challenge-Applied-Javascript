@@ -300,8 +300,5 @@ body {
 }
 .carousel img {
   width: 100%;
-  display: none;
-}
-.carousel .active-img {
-  display: block;
+  display: inline-block;
 }

@@ -5,25 +5,58 @@ class Carousel {
         this.leftButton = this.element.querySelector('.left-button');
         this.rightButton = this.element.querySelector('.right-button');
 
-        this.leftButton.addEventListener('click', () => this.scrollLeft());
-        this.rightButton.addEventListener('click', () => this.scrollRight());
+        this.leftButton.addEventListener('mousedown', () => this.scrollLeft());
+        this.leftButton.addEventListener('mouseup', () => this.endAnimation());
+        this.rightButton.addEventListener('mousedown', () => this.scrollRight());
     }
     scrollLeft() {
-        const active = document.querySelector('.active-img');
-        let next = Number(active.dataset.number) - 1;
-        if(next < 0) next = this.images.length - 1;
-        let scrollTo = this.images[next];
-        active.classList.remove('active-img');
-        scrollTo.classList.add('active-img');
+        this.setInfiniteScroll('left');
+        //const active = document.querySelector('.active-img');
+        //let next = Number(active.dataset.number) - 1;
+        //if(next < 0) next = this.images.length - 1;
+        //let scrollTo = this.images[next];
+        //active.classList.remove('active-img');
+        //scrollTo.classList.add('active-img');
 
     }
     scrollRight() {
-        const active = document.querySelector('.active-img');
-        let next = Number(active.dataset.number) + 1;
-        if(next + 1 > this.images.length) next = 0;
-        let scrollTo = this.images[next];
-        active.classList.remove('active-img');
-        scrollTo.classList.add('active-img');
+        this.setInfiniteScroll('right');
+        //const active = document.querySelector('.active-img');
+        //let next = Number(active.dataset.number) + 1;
+        //if(next + 1 > this.images.length) next = 0;
+        //let scrollTo = this.images[next];
+        //active.classList.remove('active-img');
+        //scrollTo.classList.add('active-img');
+    }
+
+    setInfiniteScroll(direction) {
+        let sliderWidth = 0;
+        let animationWidth = 0;
+        let sliderHeight = this.element.offsetHeight;
+        this.images.forEach(current => animationWidth += current.offsetWidth);
+        let slidesVisible = this.element.width / this.images[0].outerWidth;
+        let slidesNumber = this.images.length;
+        let speed = slidesNumber * 2;
+        let copies = [...this.element.children].forEach((current, index) => {
+            if(index > slidesNumber) return;
+            let newChild = this.element.appendChild(current.cloneNode());
+            [...this.images].push(newChild);
+        });
+        this.images.forEach(current => sliderWidth += current.offsetWidth);
+        this.element.style.width = sliderWidth;
+        this.element.style.height = sliderHeight;
+
+        let left = [{'margin-left': '0px'}, {'margin-left': `${animationWidth}px`}];
+        let right = [{'margin-left': '0px'}, {'margin-left': `-${animationWidth}px`}];
+
+        if(direction === 'left') TweenMax.fromTo(this.images[0], 10, left[0], left[1]);
+        else TweenMax.fromTo(this.images[0], 10, right[0], right[1]);
+
+
+    }
+
+    endAnimation() {
+
     }
 
 }
